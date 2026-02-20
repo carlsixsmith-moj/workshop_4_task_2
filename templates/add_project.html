@@ -9,6 +9,16 @@
         <input type="text" id="name" name="name" class="form-control" required>
     </div>
     <div class="mb-3">
+        <label for="category_id" class="form-label">Category (optional):</label>
+        <select id="category_id" name="category_id" class="form-control">
+            <option value="">-- No Category --</option>
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select> 
+    </div>
+
+    <div class="mb-3">
         <label for="description" class="form-label">Description (optional):</label>
         <textarea id="description" name="description" rows="3" class="form-control"></textarea>
     </div>

@@ -11,6 +11,7 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>Category</th>
             <th>Description</th>
             <th>Actions</th>
         </tr>
@@ -19,7 +20,16 @@
         {% for project in projects %}
         <tr>
             <td>{{ project.id }}</td>
-            <td>{{ project.name }}</td>
+            <td><a href="{{ url_for('project_detail', id=project.id) }}">{{ project.name }}</a></td>
+            <td>
+                {% if project.category %}
+                <a href="{{ url_for('category_detail', id=project.category.id) }}">
+                    {{ project.category.name }}
+                </a>
+                {% else %}
+                -
+                {% endif %}
+            </td> 
             <td>{{ project.description or "-" }}</td>
             <td>
                 <a href="{{ url_for('edit_project', id = project.id) }}" class="btn btn-edit">Edit</a>
