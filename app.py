@@ -1,5 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
+import sys
+import os
+
+# add the current directory to the Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from flask import Flask, render_template, request, redirect, url_for, abort
+from models import db, Project
 
 # -- Create the flask application --
 app = Flask(__name__)
@@ -8,19 +14,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# -- Connect SQLAlchemy to the app --
-db = SQLAlchemy(app)
-
-
-# -- Define the data models
-class Project(db.Model):
-    id          = db.Column(db.Integer, primary_key=True)
-    name        = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(500), nullable=True)
-
-    def __repr__(self):
-        return f'<Project {self.id}: {self.name}>'
-    
+# -- intialise the database with the appo --
+db.init_app(app)
+   
 @app.route('/')
 def list_projects():
     projects = Project.query.all()
@@ -45,7 +41,7 @@ def edit_project(id):
     project = db.session.get(Project, id)
 
     if project is None:
-        return 'Project not found', 404
+        abort(404)
     
     if request.method == 'POST':
         project.name = request.form['name']
@@ -62,7 +58,7 @@ def delete_project(id):
     project = db.session.get(Project, id)
 
     if project is None:
-        return 'Project not found', 404
+        abort(404)
     
     db.session.delete(project)
     db.session.commit()
